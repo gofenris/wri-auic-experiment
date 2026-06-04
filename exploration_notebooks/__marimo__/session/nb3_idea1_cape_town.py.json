@@ -1,0 +1,230 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.23.8",
+    "script_metadata_hash": "00bebed77efde5cc44229958a3c3103c"
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "9c341ee9b79866f5ec5f2641007a4cb3",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"idea-1-cape-town-data-feasibility-assessment\">Idea 1 \u00d7 Cape Town \u2014 Data Feasibility Assessment</h1>\n<span class=\"paragraph\"><strong>Idea:</strong> Priority Area Identification &amp; Exploration\n<strong>City:</strong> Cape Town (<code>ZAF-Cape_Town</code>)\n<strong>Question:</strong> Does the CCL data exist at a granularity that makes this idea viable?</span>\n<hr />\n<span class=\"paragraph\">This notebook assesses one workshop idea against one city. It is not a general survey \u2014\nit is a concrete feasibility check grounded in what the API and S3 bucket actually contain\nfor Cape Town today.</span>\n<span class=\"paragraph\"><strong>Why granularity matters:</strong></span>\n<span class=\"paragraph\">Most ideas say \"do X for a selected city or AOI.\" That framing hides the key question:\nat what spatial resolution does the data exist?</span>\n<table>\n<thead>\n<tr>\n<th>Granularity</th>\n<th>What it enables</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>City-level scalar</td>\n<td>A single number per city \u2014 can summarise, cannot spatially vary</td>\n</tr>\n<tr>\n<td>District-level polygon attribute</td>\n<td>One value per district \u2014 can compare districts, cannot support arbitrary custom AOIs</td>\n</tr>\n<tr>\n<td>Pixel-level raster (COG)</td>\n<td>Spatially continuous \u2014 any custom AOI can be analysed via zonal statistics</td>\n</tr>\n</tbody>\n</table>\n<span class=\"paragraph\">Only pixel-level data supports freeform AOI workflows. District-level data can compare\nnamed areas, but a user cannot draw a polygon and get a meaningful result from it.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "b22b4b1c25002d37255b4a1ce88b55fc",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "7a5a726aa228321e1a2c4e681b1534a2",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"idea-1-priority-area-identification-exploration\">Idea 1: Priority Area Identification &amp; Exploration</h2>\n<blockquote>\n<span class=\"paragraph\"><em>An interactive map workflow where users describe their goals or priorities, and the system\nhighlights suggested intervention areas on the map. Users can then select an area to explore\nsummaries, recommendations, intervention comparisons, or proposal-related workflows.</em></span>\n</blockquote>\n<span class=\"paragraph\"><strong>Feasibility note from the workshop synthesis:</strong>\nPriority will be determined by existing model outputs plus user-input goals. Goals are mapped\nto existing baseline layers \u2014 the example given is \"vulnerable population density.\" The tool\nwould generate AOI polygons, apply summaries, compute indices, and provide a natural language\njustification.</span>\n<span class=\"paragraph\"><strong>The crux question:</strong>\nFor a user who says \"prioritise areas with high heat risk\" or \"prioritise areas with vulnerable\npopulations,\" does Cape Town have the data to actually find those areas spatially?</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "f1c0c25fa43fa9144b68fc0e7c0c9c7d",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"load-workshop-ideas-idea-1\">Load workshop ideas \u2014 Idea 1</h3></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "2d1d1386d859862dc4bc47504acef84c",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Priority Area Identification &amp; Exploration</strong></span></span><marimo-ui-element object-id='lEQa-0' random-id='418ef346-6d3b-e16d-6d5c-b2ace6f8f46b'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Field&#92;&quot;:&#92;&quot;Description&#92;&quot;,&#92;&quot;Value&#92;&quot;:&#92;&quot;An interactive map workflow where users describe their goals or priorities, and the system highlights suggested intervention areas on the map. Users can then select an area to explore summaries, recommendations, intervention comparisons, or proposal-related workflows.&#92;&quot;},{&#92;&quot;Field&#92;&quot;:&#92;&quot;Inputs&#92;&quot;,&#92;&quot;Value&#92;&quot;:&#92;&quot;CCL data, user-defined priorities or objectives, potentially funding criteria or intervention goals, optional contextual filters (schools, hospitals, public infrastructure, etc.)&#92;&quot;},{&#92;&quot;Field&#92;&quot;:&#92;&quot;Workstream&#92;&quot;,&#92;&quot;Value&#92;&quot;:&#92;&quot;Workstream 1: Explaining data and guiding decision-making.,Workstream 2: Filtering maps and selecting/optimizing implementation areas.&#92;&quot;}]&quot;' data-total-rows='3' data-size-bytes='680' data-total-columns='2' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-field-types='[[&quot;Field&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;Value&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "675ae163623c082cecb7688dde37e49c",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"what-does-idea-1-actually-need\">What does Idea 1 actually need?</h3>\n<span class=\"paragraph\">The workshop synthesis names <strong>\"vulnerable population density\"</strong> as an example baseline layer that\ngoals would be mapped onto. More broadly, to surface priority areas spatially, the idea needs at\nleast one of the following:</span>\n<table>\n<thead>\n<tr>\n<th>Data need</th>\n<th>Why it's needed</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>A heat risk or thermal stress layer, pixel-level</td>\n<td>To find areas of high heat exposure</td>\n</tr>\n<tr>\n<td>A population density or vulnerability layer, pixel-level</td>\n<td>To find areas where at-risk people are concentrated</td>\n</tr>\n<tr>\n<td>An exposure layer combining heat \u00d7 population</td>\n<td>The direct measure of who is most at risk</td>\n</tr>\n</tbody>\n</table>\n<span class=\"paragraph\">For any of these to support a custom AOI workflow, the data must exist <strong>as a COG raster</strong> \u2014\nnot just as a city-level scalar in the API.</span>\n<span class=\"paragraph\">The sections below check what Cape Town actually has.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "bd980286378f21d3c989a0e4348c0309",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"step-1-scalar-indicator-keys-for-cape-town\">Step 1 \u2014 Scalar indicator keys for Cape Town</h3></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "89ebbc025740afa24b40c8509dccb692",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Cape Town</strong> has <strong>213 indicator values</strong> across AOI types: <code>business_district</code>, <code>urban_extent</code></span></span><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>104 unique metric stems</strong> found.</span></span></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "7dda83c8c4eb113239ed81df927c8030",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"step-2-are-any-scalar-indicators-related-to-idea-1s-data-needs\">Step 2 \u2014 Are any scalar indicators related to Idea 1's data needs?</h3></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "RGSE",
+      "code_hash": "00422e87800d56ca3e8b4fdc3fcad9f4",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><marimo-ui-element object-id='RGSE-0' random-id='8f2b1594-ea2b-e727-212a-abbdded79bf5'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;Theme&#92;&quot;:&#92;&quot;UTCI thermal stress&#92;&quot;,&#92;&quot;Count&#92;&quot;:33,&#92;&quot;Examples&#92;&quot;:&#92;&quot;baseline_mean_utci_parks_1200, baseline_mean_utci_parks_1500, baseline_mean_utci_parks_1800&#92;&quot;},{&#92;&quot;Theme&#92;&quot;:&#92;&quot;Shade cover&#92;&quot;,&#92;&quot;Count&#92;&quot;:37,&#92;&quot;Examples&#92;&quot;:&#92;&quot;achievable_park_shade_cover_1200, baseline_park_shade_1200, baseline_park_shade_1500&#92;&quot;},{&#92;&quot;Theme&#92;&quot;:&#92;&quot;Tree cover&#92;&quot;,&#92;&quot;Count&#92;&quot;:8,&#92;&quot;Examples&#92;&quot;:&#92;&quot;tree_cover_achievable_pedestrian, tree_cover_baseline_pedestrian, tree_cover_change_pedestrian&#92;&quot;},{&#92;&quot;Theme&#92;&quot;:&#92;&quot;Roof / reflectivity&#92;&quot;,&#92;&quot;Count&#92;&quot;:14,&#92;&quot;Examples&#92;&quot;:&#92;&quot;achievable_cool_roof_area, achievable_cool_roof_reflectivity, achievable_reflectivity&#92;&quot;},{&#92;&quot;Theme&#92;&quot;:&#92;&quot;Population / vulnerability / risk (Idea 1 needs)&#92;&quot;,&#92;&quot;Count&#92;&quot;:3,&#92;&quot;Examples&#92;&quot;:&#92;&quot;high_risk_utci_pct__1500_baseline_pedestrian, high_risk_utci_pct__1500_change_pedestrian, high_risk_utci_pct__1500_scenario_pedestrian&#92;&quot;},{&#92;&quot;Theme&#92;&quot;:&#92;&quot;Other&#92;&quot;,&#92;&quot;Count&#92;&quot;:12,&#92;&quot;Examples&#92;&quot;:&#92;&quot;air_temp_reduction_1500_impact_area, aoi_area, baseline_mean_air_temp_1200&#92;&quot;}]&quot;' data-total-rows='6' data-size-bytes='901' data-total-columns='3' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-field-types='[[&quot;Theme&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;Count&quot;,[&quot;integer&quot;,&quot;int64&quot;]],[&quot;Examples&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='true' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><marimo-callout-output data-html='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003e&#92;u003cstrong&#92;u003e3 scalar indicator(s) match population/vulnerability terms.&#92;u003c/strong&#92;u003e Matches: &#92;u003ccode&#92;u003ehigh_risk_utci_pct__1500_baseline_pedestrian&#92;u003c/code&#92;u003e, &#92;u003ccode&#92;u003ehigh_risk_utci_pct__1500_change_pedestrian&#92;u003c/code&#92;u003e, &#92;u003ccode&#92;u003ehigh_risk_utci_pct__1500_scenario_pedestrian&#92;u003c/code&#92;u003e&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-kind='&quot;info&quot;'></marimo-callout-output></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Kclp",
+      "code_hash": "8dc99ffa65aa0f59ee49f2a6766d3cb0",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"step-3-cog-raster-inventory-for-cape-town\">Step 3 \u2014 COG raster inventory for Cape Town</h3></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "emfo",
+      "code_hash": "1714b677bbf9aa09a794e52a3cc0d21f",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>63 COG files</strong> found for Cape Town in <code>data/dev/utci/cog/</code></span></span><marimo-ui-element object-id='emfo-0' random-id='57001757-8a60-7764-8e0b-df1b4b8213d1'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;aoi&#92;&quot;:&#92;&quot;business_district&#92;&quot;,&#92;&quot;layer_id&#92;&quot;:&#92;&quot;utci-1500&#92;&quot;,&#92;&quot;time_of_day&#92;&quot;:&#92;&quot;1500&#92;&quot;,&#92;&quot;data_type&#92;&quot;:&#92;&quot;scenario&#92;&quot;,&#92;&quot;intervention&#92;&quot;:&#92;&quot;1500&#92;&quot;,&#92;&quot;spatial_mask&#92;&quot;:&#92;&quot;full AOI&#92;&quot;,&#92;&quot;size_mb&#92;&quot;:0.6},{&#92;&quot;aoi&#92;&quot;:&#92;&quot;business_district&#92;&quot;,&#92;&quot;layer_id&#92;&quot;:&#92;&quot;utci-1500&#92;&quot;,&#92;&quot;time_of_day&#92;&quot;:&#92;&quot;1500&#92;&quot;,&#92;&quot;data_type&#92;&quot;:&#92;&quot;scenario&#92;&quot;,&#92;&quot;intervention&#92;&quot;:&#92;&quot;1500&#92;&quot;,&#92;&quot;spatial_mask&#92;&quot;:&#92;&quot;full AOI&#92;&quot;,&#92;&quot;size_mb&#92;&quot;:5.7},{&#92;&quot;aoi&#92;&quot;:&#92;&quot;business_district&#92;&quot;,&#92;&quot;layer_id&#92;&quot;:&#92;&quot;utci-1500&#92;&quot;,&#92;&quot;time_of_day&#92;&quot;:&#92;&quot;1500&#92;&quot;,&#92;&quot;data_type&#92;&quot;:&#92;&quot;scenario&#92;&quot;,&#92;&quot;intervention&#92;&quot;:&#92;&quot;1500&#92;&quot;,&#92;&quot;spatial_mask&#92;&quot;:&#92;&quot;full AOI&#92;&quot;,&#92;&quot;size_mb&#92;&quot;:2.0},{&#92;&quot;aoi&#92;&quot;:&#92;&quot;business_district&#92;&quot;,&#92;&quot;layer_id&#92;&quot;:&#92;&quot;utci-cat-1500-non-building-areas&#92;&quot;,&#92;&quot;time_of_day&#92;&quot;:&#92;&quot;1500&#92;&quot;,&#92;&quot;data_type&#92;&quot;:&#92;&quot;scenario&#92;&quot;,&#92;&quot;intervention&#92;&quot;:&#92;&quot;cat&#92;&quot;,&#92;&quot;spatial_mask&#92;&quot;:&#92;&quot;non-buildings&#92;&quot;,&#92;&quot;size_mb&#92;&quot;:0.3},{&#92;&quot;aoi&#92;&quot;:&#92;&quot;business_district&#92;&quot;,&#92;&quot;layer_id&#92;&quot;:&#92;&quot;utci-cat-1500&#92;&quot;,&#92;&quot;time_of_day&#92;&quot;:&#92;&quot;1500&#92;&quot;,&#92;&quot;data_type&#92;&quot;:&#92;&quot;scenario&#92;&quot;,&#92;&quot;intervention&#92;&quot;:&#92;&quot;cat-1500&#92;&quot;,&#92;&quot;spatial_mask&#92;&quot;:&#92;&quot;full AOI&#92;&quot;,&#92;&quot;size_mb&#92;&quot;:0.3},{&#92;&quot;aoi&#92;&quot;:&#92;&quot;business_district&#92;&quot;,&#92;&quot;layer_id&#92;&quot;:&#92;&quot;utci_1200_baseline&#92;&quot;,&#92;&quot;time_of_day&#92;&quot;:&#92;&quot;1200&#92;&quot;,&#92;&quot;data_type&#92;&quot;:&#92;&quot;baseline&#92;&quot;,&#92;&quot;intervention&#92;&quot;:&#92;&quot;baseline&#92;&quot;,&#92;&quot;spatial_mask&#92;&quot;:&#92;&quot;full AOI&#92;&quot;,&#92;&quot;size_mb&#92;&quot;:7.4},{&#92;&quot;aoi&#92;&quot;:&#92;&quot;business_district&#92;&quot;,&#92;&quot;layer_id&#92;&quot;:&#92;&quot;utci_1200_baseline_non_buildings&#92;&quot;,&#92;&quot;time_of_day&#92;&quot;:&#92;&quot;1200&#92;&quot;,&#92;&quot;data_type&#92;&quot;:&#92;&quot;baseline&#92;&quot;,&#92;&quot;intervention&#92;&quot;:&#92;&quot;baseline&#92;&quot;,&#92;&quot;spatial_mask&#92;&quot;:&#92;&quot;non-buildings&#92;&quot;,&#92;&quot;size_mb&#92;&quot;:5.7},{&#92;&quot;aoi&#92;&quot;:&#92;&quot;business_district&#92;&quot;,&#92;&quot;layer_id&#92;&quot;:&#92;&quot;utci_1200_cool_roofs_achievable&#92;&quot;,&#92;&quot;time_of_day&#92;&quot;:&#92;&quot;1200&#92;&quot;,&#92;&quot;data_type&#92;&quot;:&#92;&quot;scenario&#92;&quot;,&#92;&quot;intervention&#92;&quot;:&#92;&quot;cool roofs&#92;&quot;,&#92;&quot;spatial_mask&#92;&quot;:&#92;&quot;full AOI&#92;&quot;,&#92;&quot;size_mb&#92;&quot;:7.4},{&#92;&quot;aoi&#92;&quot;:&#92;&quot;business_district&#92;&quot;,&#92;&quot;layer_id&#92;&quot;:&#92;&quot;utci_1200_cool_roofs_achievable_vs_baseline&#92;&quot;,&#92;&quot;time_of_day&#92;&quot;:&#92;&quot;1200&#92;&quot;,&#92;&quot;data_type&#92;&quot;:&#92;&quot;delta (vs baseline)&#92;&quot;,&#92;&quot;intervention&#92;&quot;:&#92;&quot;cool roofs&#92;&quot;,&#92;&quot;spatial_mask&#92;&quot;:&#92;&quot;full AOI&#92;&quot;,&#92;&quot;size_mb&#92;&quot;:7.7},{&#92;&quot;aoi&#92;&quot;:&#92;&quot;business_district&#92;&quot;,&#92;&quot;layer_id&#92;&quot;:&#92;&quot;utci_1200_cool_roofs_achievable_vs_baseline_non_buildings&#92;&quot;,&#92;&quot;time_of_day&#92;&quot;:&#92;&quot;1200&#92;&quot;,&#92;&quot;data_type&#92;&quot;:&#92;&quot;delta (vs baseline)&#92;&quot;,&#92;&quot;intervention&#92;&quot;:&#92;&quot;cool roofs&#92;&quot;,&#92;&quot;spatial_mask&#92;&quot;:&#92;&quot;non-buildings&#92;&quot;,&#92;&quot;size_mb&#92;&quot;:5.8}]&quot;' data-total-rows='63' data-size-bytes='12899' data-total-columns='7' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='true' data-page-size='10' data-field-types='[[&quot;aoi&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;layer_id&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;time_of_day&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;data_type&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;intervention&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;spatial_mask&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;size_mb&quot;,[&quot;number&quot;,&quot;float64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='true' data-show-data-types='true' data-show-page-size-selector='true' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Hstk",
+      "code_hash": "32640cf10424fa02a169fae7a3e70edc",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"step-4-what-data-themes-do-the-cogs-cover\">Step 4 \u2014 What data themes do the COGs cover?</h3></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "nWHF",
+      "code_hash": "eddc22688527c5160a17e17024f13a32",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>By data type</strong> (baseline / scenario output / delta vs. baseline):</span></span><marimo-ui-element object-id='nWHF-0' random-id='fa95e273-9cde-1588-d034-4f301ccb6269'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;data_type&#92;&quot;:&#92;&quot;baseline&#92;&quot;,&#92;&quot;count&#92;&quot;:10},{&#92;&quot;data_type&#92;&quot;:&#92;&quot;delta (vs baseline)&#92;&quot;,&#92;&quot;count&#92;&quot;:24},{&#92;&quot;data_type&#92;&quot;:&#92;&quot;scenario&#92;&quot;,&#92;&quot;count&#92;&quot;:29}]&quot;' data-total-rows='3' data-size-bytes='120' data-total-columns='2' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-field-types='[[&quot;data_type&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;count&quot;,[&quot;integer&quot;,&quot;int64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>By intervention:</strong></span></span><marimo-ui-element object-id='nWHF-1' random-id='35b33625-5082-e5f5-86e3-29ae52940ef2'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;intervention&#92;&quot;:&#92;&quot;1500&#92;&quot;,&#92;&quot;count&#92;&quot;:3},{&#92;&quot;intervention&#92;&quot;:&#92;&quot;baseline&#92;&quot;,&#92;&quot;count&#92;&quot;:9},{&#92;&quot;intervention&#92;&quot;:&#92;&quot;baseline_urban_extent&#92;&quot;,&#92;&quot;count&#92;&quot;:1},{&#92;&quot;intervention&#92;&quot;:&#92;&quot;cat&#92;&quot;,&#92;&quot;count&#92;&quot;:1},{&#92;&quot;intervention&#92;&quot;:&#92;&quot;cat-1500&#92;&quot;,&#92;&quot;count&#92;&quot;:1},{&#92;&quot;intervention&#92;&quot;:&#92;&quot;cool roofs&#92;&quot;,&#92;&quot;count&#92;&quot;:12},{&#92;&quot;intervention&#92;&quot;:&#92;&quot;park shade&#92;&quot;,&#92;&quot;count&#92;&quot;:18},{&#92;&quot;intervention&#92;&quot;:&#92;&quot;street trees&#92;&quot;,&#92;&quot;count&#92;&quot;:5},{&#92;&quot;intervention&#92;&quot;:&#92;&quot;street trees + cool roofs&#92;&quot;,&#92;&quot;count&#92;&quot;:12},{&#92;&quot;intervention&#92;&quot;:&#92;&quot;street_trees_achievable_test&#92;&quot;,&#92;&quot;count&#92;&quot;:1}]&quot;' data-total-rows='10' data-size-bytes='433' data-total-columns='2' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-field-types='[[&quot;intervention&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;count&quot;,[&quot;integer&quot;,&quot;int64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='true' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>By time of day:</strong></span></span><marimo-ui-element object-id='nWHF-2' random-id='4eecce44-5412-506e-6f18-c255b32a9bf8'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;time_of_day&#92;&quot;:&#92;&quot;1200&#92;&quot;,&#92;&quot;count&#92;&quot;:16},{&#92;&quot;time_of_day&#92;&quot;:&#92;&quot;1500&#92;&quot;,&#92;&quot;count&#92;&quot;:31},{&#92;&quot;time_of_day&#92;&quot;:&#92;&quot;1800&#92;&quot;,&#92;&quot;count&#92;&quot;:16}]&quot;' data-total-rows='3' data-size-bytes='103' data-total-columns='2' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-field-types='[[&quot;time_of_day&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;count&quot;,[&quot;integer&quot;,&quot;int64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element><marimo-callout-output data-html='&quot;&#92;u003cspan class=&#92;&quot;markdown prose dark:prose-invert contents&#92;&quot;&#92;u003e&#92;u003cspan class=&#92;&quot;paragraph&#92;&quot;&#92;u003e&#92;u003cstrong&#92;u003eNo population, vulnerability, or demographic COG rasters found for Cape Town.&#92;u003c/strong&#92;u003e All COGs are UTCI (thermal comfort index) rasters. They cover baseline conditions and multiple intervention scenarios across 3 times of day (1200, 1500, 1800) and several spatial masks \u2014 but the underlying measurement is always thermal stress, not population exposure or vulnerability.&#92;u003c/span&#92;u003e&#92;u003c/span&#92;u003e&quot;' data-kind='&quot;warn&quot;'></marimo-callout-output></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "iLit",
+      "code_hash": "03d54aeef80837e122bd92fe05278342",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"assessment-what-exists-for-cape-town-and-at-what-granularity\">Assessment: what exists for Cape Town, and at what granularity</h3>\n<table>\n<thead>\n<tr>\n<th>Data need for Idea 1</th>\n<th>In scalar API?</th>\n<th>As pixel-level COG?</th>\n<th>Granularity verdict</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Heat / thermal stress (UTCI baseline)</td>\n<td>Yes \u2014 <code>mean_utci_*</code> stems</td>\n<td>Yes \u2014 63 COGs</td>\n<td><strong>Pixel-level</strong> \u2713</td>\n</tr>\n<tr>\n<td>Scenario cooling outcomes</td>\n<td>Yes \u2014 <code>mean_utci_*_scenario_*</code></td>\n<td>Yes \u2014 multiple scenarios</td>\n<td><strong>Pixel-level</strong> \u2713</td>\n</tr>\n<tr>\n<td><code>high_risk_utci_pct</code> (% area in high heat risk)</td>\n<td>Yes \u2014 3 keys</td>\n<td>No COG found</td>\n<td><strong>Scalar only</strong></td>\n</tr>\n<tr>\n<td>Population density</td>\n<td>No</td>\n<td>No</td>\n<td><strong>Absent</strong></td>\n</tr>\n<tr>\n<td>Vulnerable population density</td>\n<td>No</td>\n<td>No</td>\n<td><strong>Absent</strong></td>\n</tr>\n<tr>\n<td>Demographic / socioeconomic indicators</td>\n<td>No</td>\n<td>No</td>\n<td><strong>Absent</strong></td>\n</tr>\n<tr>\n<td>Land use / public assets</td>\n<td>No</td>\n<td>No</td>\n<td><strong>Absent</strong></td>\n</tr>\n</tbody>\n</table>\n<span class=\"paragraph\"><strong>What Cape Town has:</strong></span>\n<ul>\n<li>A rich set of UTCI thermal stress rasters at pixel resolution (1200, 1500, 1800 time-of-day),\n  covering both baseline conditions and multiple intervention scenarios (cool roofs, street trees,\n  park shade, combinations).</li>\n<li>All COGs are for the <code>business_district</code> AOI, plus one <code>urban_extent</code> baseline.</li>\n<li>These rasters are sufficient to answer \"where in this area is heat stress highest?\" and\n  \"where would intervention X reduce heat the most?\"</li>\n</ul>\n<span class=\"paragraph\"><strong>What Cape Town does not have:</strong></span>\n<ul>\n<li>Any population, vulnerability, demographic, or socioeconomic data \u2014 neither as scalars\n  nor as pixel-level rasters.</li>\n<li>Any land-use data (parks, schools, hospitals, roads).</li>\n<li>Any \"exposure\" layer combining heat and population together.</li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ZHCJ",
+      "code_hash": "90ba2af0e0ef20de7523843db2564c54",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"user-priorities-data-availability\">User priorities \u00d7 data availability</h3></span><span class=\"markdown prose dark:prose-invert contents\"><span class=\"paragraph\"><strong>Section A</strong> maps the four example priorities from the product concept. <strong>Section B</strong> adds priorities that the available Cape Town data actually enables \u2014 framed as user goals the system could credibly support today.</span></span><marimo-ui-element object-id='ZHCJ-0' random-id='6ee3bde8-fc1d-ad93-2d45-c1c9150cdd70'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;section&#92;&quot;:&#92;&quot;A &#92;&#92;u2014 from product concept&#92;&quot;,&#92;&quot;user_priority&#92;&quot;:&#92;&quot;Reduce extreme heat exposure&#92;&quot;,&#92;&quot;data_available&#92;&quot;:&#92;&quot;UTCI baseline + scenario delta COGs&#92;&quot;,&#92;&quot;granularity&#92;&quot;:&#92;&quot;Pixel&#92;&quot;,&#92;&quot;custom_aoi_viable&#92;&quot;:&#92;&quot;Yes&#92;&quot;,&#92;&quot;gap&#92;&quot;:&#92;&quot;None&#92;&quot;},{&#92;&quot;section&#92;&quot;:&#92;&quot;A &#92;&#92;u2014 from product concept&#92;&quot;,&#92;&quot;user_priority&#92;&quot;:&#92;&quot;Protect vulnerable populations&#92;&quot;,&#92;&quot;data_available&#92;&quot;:&#92;&quot;high_risk_utci_pct scalar only&#92;&quot;,&#92;&quot;granularity&#92;&quot;:&#92;&quot;District&#92;&quot;,&#92;&quot;custom_aoi_viable&#92;&quot;:&#92;&quot;No&#92;&quot;,&#92;&quot;gap&#92;&quot;:&#92;&quot;Need population/vulnerability raster (e.g. WorldPop)&#92;&quot;},{&#92;&quot;section&#92;&quot;:&#92;&quot;A &#92;&#92;u2014 from product concept&#92;&quot;,&#92;&quot;user_priority&#92;&quot;:&#92;&quot;Increase tree canopy&#92;&quot;,&#92;&quot;data_available&#92;&quot;:&#92;&quot;tree_cover_* scalars only&#92;&quot;,&#92;&quot;granularity&#92;&quot;:&#92;&quot;District&#92;&quot;,&#92;&quot;custom_aoi_viable&#92;&quot;:&#92;&quot;No&#92;&quot;,&#92;&quot;gap&#92;&quot;:&#92;&quot;Need tree canopy raster (e.g. open canopy dataset)&#92;&quot;},{&#92;&quot;section&#92;&quot;:&#92;&quot;A &#92;&#92;u2014 from product concept&#92;&quot;,&#92;&quot;user_priority&#92;&quot;:&#92;&quot;Maximise impact per budget&#92;&quot;,&#92;&quot;data_available&#92;&quot;:&#92;&quot;Scenario delta COGs (impact side only)&#92;&quot;,&#92;&quot;granularity&#92;&quot;:&#92;&quot;Pixel (impact only)&#92;&quot;,&#92;&quot;custom_aoi_viable&#92;&quot;:&#92;&quot;Partial&#92;&quot;,&#92;&quot;gap&#92;&quot;:&#92;&quot;Cost data entirely absent &#92;&#92;u2014 must be user-supplied&#92;&quot;},{&#92;&quot;section&#92;&quot;:&#92;&quot;B &#92;&#92;u2014 enabled by available data&#92;&quot;,&#92;&quot;user_priority&#92;&quot;:&#92;&quot;Where would street trees cool the most?&#92;&quot;,&#92;&quot;data_available&#92;&quot;:&#92;&quot;street_trees COG deltas (1200, 1500, 1800)&#92;&quot;,&#92;&quot;granularity&#92;&quot;:&#92;&quot;Pixel&#92;&quot;,&#92;&quot;custom_aoi_viable&#92;&quot;:&#92;&quot;Yes&#92;&quot;,&#92;&quot;gap&#92;&quot;:&#92;&quot;None&#92;&quot;},{&#92;&quot;section&#92;&quot;:&#92;&quot;B &#92;&#92;u2014 enabled by available data&#92;&quot;,&#92;&quot;user_priority&#92;&quot;:&#92;&quot;Where would cool roofs have the highest impact?&#92;&quot;,&#92;&quot;data_available&#92;&quot;:&#92;&quot;cool_roofs COG deltas (1200, 1500, 1800)&#92;&quot;,&#92;&quot;granularity&#92;&quot;:&#92;&quot;Pixel&#92;&quot;,&#92;&quot;custom_aoi_viable&#92;&quot;:&#92;&quot;Yes&#92;&quot;,&#92;&quot;gap&#92;&quot;:&#92;&quot;None&#92;&quot;},{&#92;&quot;section&#92;&quot;:&#92;&quot;B &#92;&#92;u2014 enabled by available data&#92;&quot;,&#92;&quot;user_priority&#92;&quot;:&#92;&quot;Where is heat stress worst at peak afternoon?&#92;&quot;,&#92;&quot;data_available&#92;&quot;:&#92;&quot;UTCI baseline COG at 1500&#92;&quot;,&#92;&quot;granularity&#92;&quot;:&#92;&quot;Pixel&#92;&quot;,&#92;&quot;custom_aoi_viable&#92;&quot;:&#92;&quot;Yes&#92;&quot;,&#92;&quot;gap&#92;&quot;:&#92;&quot;None&#92;&quot;},{&#92;&quot;section&#92;&quot;:&#92;&quot;B &#92;&#92;u2014 enabled by available data&#92;&quot;,&#92;&quot;user_priority&#92;&quot;:&#92;&quot;Which intervention cools the most in my selected area?&#92;&quot;,&#92;&quot;data_available&#92;&quot;:&#92;&quot;Delta COGs for street trees, cool roofs, park shade, combinations&#92;&quot;,&#92;&quot;granularity&#92;&quot;:&#92;&quot;Pixel&#92;&quot;,&#92;&quot;custom_aoi_viable&#92;&quot;:&#92;&quot;Yes&#92;&quot;,&#92;&quot;gap&#92;&quot;:&#92;&quot;Requires zonal stats over multiple COGs &#92;&#92;u2014 computationally feasible&#92;&quot;},{&#92;&quot;section&#92;&quot;:&#92;&quot;B &#92;&#92;u2014 enabled by available data&#92;&quot;,&#92;&quot;user_priority&#92;&quot;:&#92;&quot;How does combined street trees + cool roofs compare to either alone?&#92;&quot;,&#92;&quot;data_available&#92;&quot;:&#92;&quot;street_trees_cool_roofs combined delta COGs exist&#92;&quot;,&#92;&quot;granularity&#92;&quot;:&#92;&quot;Pixel&#92;&quot;,&#92;&quot;custom_aoi_viable&#92;&quot;:&#92;&quot;Yes&#92;&quot;,&#92;&quot;gap&#92;&quot;:&#92;&quot;None&#92;&quot;}]&quot;' data-total-rows='9' data-size-bytes='2261' data-total-columns='6' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-field-types='[[&quot;section&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;user_priority&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;data_available&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;granularity&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;custom_aoi_viable&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;gap&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='true' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ROlb",
+      "code_hash": "093692483b1c4e36e055304e33069d2f",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h3 id=\"feasibility-implications-for-idea-1\">Feasibility implications for Idea 1</h3>\n<span class=\"paragraph\"><strong>The four example user priorities, assessed:</strong></span>\n<ul>\n<li><strong>\"Reduce extreme heat exposure\"</strong> \u2014 fully supported at pixel level. UTCI COGs exist for Cape\n  Town. A user can draw any AOI and compute meaningful heat exposure statistics over it.</li>\n<li><strong>\"Protect vulnerable populations\"</strong> \u2014 only partially supported. <code>high_risk_utci_pct</code> exists\n  as a scalar (one number per district), but there is no pixel-level vulnerability layer. The\n  system can tell you <em>that</em> a district has X% high-risk area, but not <em>where within it</em>\n  vulnerable people are concentrated. Custom AOI analysis is not meaningful without an\n  external population or vulnerability raster (e.g. WorldPop, national census).</li>\n<li><strong>\"Increase tree canopy\"</strong> \u2014 scalar indicators exist (<code>tree_cover_*</code>) for district-level\n  comparison, but no tree canopy COG. A user cannot draw a custom AOI and find where canopy\n  is lowest. An external dataset would be needed (e.g. an open urban canopy layer).</li>\n<li><strong>\"Maximise impact per budget\"</strong> \u2014 the impact side is well supported: scenario delta COGs\n  exist at pixel level for multiple interventions. The cost side is entirely absent from CCL\n  \u2014 would require fully user-supplied cost assumptions.</li>\n</ul>\n<span class=\"paragraph\"><strong>What the data unlocks beyond the stated examples:</strong></span>\n<span class=\"paragraph\">Section B of the table above identifies five additional user priorities that Cape Town's COG\ninventory <em>already</em> supports \u2014 all centred on comparing intervention cooling impacts spatially.\nThese are strong candidates for an early prototype, since they require no external data and\nwork at pixel resolution for any custom AOI.</span>\n<span class=\"paragraph\"><strong>Bottom line:</strong></span>\n<span class=\"paragraph\">Idea 1 splits cleanly into two tiers:</span>\n<ul>\n<li><strong>Tier 1 (buildable now):</strong> Heat-exposure and intervention-impact prioritisation \u2014 fully\n  supported by CCL COG data at pixel level.</li>\n<li><strong>Tier 2 (needs external data):</strong> Vulnerability- and equity-based prioritisation \u2014 requires\n  augmenting CCL with population or socioeconomic rasters. Technically feasible with public\n  datasets, but not a zero-effort addition.</li>\n</ul></span>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}
