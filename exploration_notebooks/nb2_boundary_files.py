@@ -63,19 +63,25 @@ def _(mo):
 
     This consists of
     * GeoJSON (`.geojson` ): Boundaries + scalar indicators for city/districts/AOIs
-       * multiple features and geometries
-       * each feature has multiple indicators
-    * PMTiles (`.pmtiles`): Same data tiled for web map rendering (MVT, z0–13)
-       * tdtd
+       * multiple features and geometries, each feature has multiple indicators
+       * this notebook fetches BRA-Campinas.geojson from S3
+       * inspects feature count, geometry types, AOI IDs
+       * visualizes all four geo_levels (city, urban_extent, accelerator_area, 7 districts)
+   * PMTiles (`.pmtiles`): Same data tiled for web map rendering (MVT, z0–13)
+       * Fetches BRA-Campinas.pmtiles
+       * reads the PMTiles header (spec version, file size);
+       * builds an interactive OpenLayers map with click interaction to read tile features
     * COG (`.tif`) Raster pixel-level indicator maps
-
+        * Lists all COG files across all CCL cities via S3 ListObjects 
+        * fetches 1 or more COG files for Campinas
+        * fetches and displays metadata (dimensions, CRS, pixel size, overviews)  
+        * renders thumbnail previews
 
     These files are
     * stored on S3 as GeoJSON and PMTiles.
     * URIs and metadata are available through the CCL API (see notebook 1)
 
     ## What We're Looking For
-    * Clarify which data we can access publicly, and what requires credentials
     * identify where baselines, model outputs and scenario outputs live
     * explore limits of the scenario outputs
     """)

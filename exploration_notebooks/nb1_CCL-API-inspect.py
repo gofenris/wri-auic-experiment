@@ -34,13 +34,18 @@ def _(mo):
 
     Notebook 1 of 3. Explores the public Cool Cities Lab REST API at `https://cities-data-api.wri.org`.
 
+    Topic: Exploration of the public Cool Cities Lab (CCL) REST API at https://cities-data-api.wri.org.
+
     **Objectives:**
     - Understand which cities have data and what their coverage looks like
+    - list endpoints and what they contain
     - Classify indicator keys into data categories: baselines, model outputs, scenario outputs
     - Check whether baseline values are duplicated across scenarios
     - Document what the layer and scenario endpoints actually return
 
-    No credentials required — the API is public.
+    Key findings: 
+        * The API is primarily a map configuration service — actual raster data lives in S3 as COG files; the API only surfaces aggregated scalar indicators and map-styling metadata.
+        * No credentials required — the API is public.
     """)
     return
 
