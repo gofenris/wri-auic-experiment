@@ -1,0 +1,4 @@
+# Allow marimo session snapshots for molab
+!__marimo__/
+!__marimo__/session/
+!__marimo__/session/*.json
