@@ -10,7 +10,7 @@
 
 import marimo
 
-__generated_with = "0.23.8"
+__generated_with = "0.23.9"
 app = marimo.App(width="medium")
 
 
@@ -43,7 +43,6 @@ def _(mo):
     Only pixel-level data supports freeform AOI workflows. District-level data can compare
     named areas, but a user cannot draw a polygon and get a meaningful result from it.
     """)
-
     return
 
 
@@ -62,7 +61,7 @@ def _():
 @app.cell(hide_code=True)
 def _(mo):
     mo.md("""
-    ## Idea 1: Priority Area Identification & Exploration
+    ## 1.1. Recap of the Idea: Priority Area Identification & Exploration
 
     > *An interactive map workflow where users describe their goals or priorities, and the system
     > highlights suggested intervention areas on the map. Users can then select an area to explore
@@ -81,37 +80,30 @@ def _(mo):
     return
 
 
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md("""
-    ### Load workshop ideas — Idea 1
-    """)
-    return
-
-
 @app.cell
-def _(Path, mo, pd):
+def _(Path, pd):
     CSV_PATH = Path(__file__).parent / "../local_data/Ideation workshop synthesis_temp_20260604.csv"
     ideas_df = pd.read_csv(CSV_PATH)
     idea1 = ideas_df.iloc[0]
 
-    mo.vstack([
-        mo.md(f"**{idea1['Idea']}**"),
-        mo.ui.table(
-            pd.DataFrame({
-                "Field": ["Description", "Inputs", "Workstream"],
-                "Value": [idea1["Description"], idea1["Inputs"], idea1["Workstream"]],
-            }),
-            selection=None,
-        ),
-    ])
+    print(f"""
+    Description: 
+    {idea1["Description"]}, 
+
+    Inputs: 
+    {idea1["Inputs"]},
+
+    Canela's Workstreams: 
+    {idea1["Workstream"]},
+    """
+    )
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md("""
-    ### What does Idea 1 actually need?
+    ### 1.1 What does Idea 1 actually need?
 
     The workshop synthesis names **"vulnerable population density"** as an example baseline layer that
     goals would be mapped onto. More broadly, to surface priority areas spatially, the idea needs at
@@ -125,8 +117,6 @@ def _(mo):
 
     For any of these to support a custom AOI workflow, the data must exist **as a COG raster** —
     not just as a city-level scalar in the API.
-
-    The sections below check what Cape Town actually has.
     """)
     return
 
@@ -134,7 +124,11 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md("""
-    ### Step 1 — Scalar indicator keys for Cape Town
+    ## 2. Cape Town
+
+    I selected Cape Town because it is one of the cities with rich data. The sections below check what Cape Town actually has.
+
+    ### 2.1 - Scalar indicator keys for Cape Town
     """)
     return
 
@@ -177,7 +171,7 @@ def _(mo, re, requests):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md("""
-    ### Step 2 — Are any scalar indicators related to Idea 1's data needs?
+    ### 2.2 — Are any scalar indicators related to Idea 1's data needs?
     """)
     return
 
@@ -211,24 +205,22 @@ def _(mo, pd, stems):
         {"Theme": "Other", "Count": len(other_stems), "Examples": ", ".join(other_stems[:3])},
     ])
 
-    mo.vstack([
-        mo.ui.table(theme_df, selection=None),
-        mo.callout(
-            mo.md(
-                f"**{len(relevant_stems)} scalar indicator(s) match population/vulnerability terms.** "
-                + (f"Matches: `{'`, `'.join(relevant_stems)}`" if relevant_stems else
-                   "The scalar API contains no population, vulnerability, or demographic indicators for Cape Town.")
-            ),
-            kind="warn" if not relevant_stems else "info",
-        ),
-    ])
+    mo.ui.table(theme_df, selection=None)
+    return (relevant_stems,)
+
+
+@app.cell(hide_code=True)
+def _(mo, relevant_stems):
+
+    print(relevant_stems)
+    mo.md(f"**{len(relevant_stems)} scalar indicator(s) match population/vulnerability terms.** ")
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md("""
-    ### Step 3 — COG raster inventory for Cape Town
+    ### 2.3 — COG raster inventory for Cape Town
     """)
     return
 
@@ -332,14 +324,13 @@ def _(ET, mo, pd, requests):
         mo.md(f"**{len(cog_df)} COG files** found for Cape Town in `data/dev/utci/cog/`"),
         mo.ui.table(cog_df, selection=None),
     ])
-
     return (cog_df,)
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md("""
-    ### Step 4 — What data themes do the COGs cover?
+    ### 2.4 — What data themes do the COGs cover?
     """)
     return
 
@@ -364,25 +355,16 @@ def _(cog_df, mo):
         mo.ui.table(by_intervention, selection=None),
         mo.md("**By time of day:**"),
         mo.ui.table(by_time, selection=None),
-        mo.callout(
-            mo.md(
-                "**No population, vulnerability, or demographic COG rasters found for Cape Town.** "
-                "All COGs are UTCI (thermal comfort index) rasters. They cover baseline conditions "
-                "and multiple intervention scenarios across 3 times of day (1200, 1500, 1800) and "
-                "several spatial masks — but the underlying measurement is always thermal stress, "
-                "not population exposure or vulnerability."
-            ),
-            kind="warn",
-        ),
     ])
-
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md("""
-    ### Assessment: what exists for Cape Town, and at what granularity
+    ## 3 Assessment: Mapping data requirements vs what's available (in Cape Town)
+
+    what exists for Cape Town, and at what granularity
 
     | Data need for Idea 1 | In scalar API? | As pixel-level COG? | Granularity verdict |
     |---|---|---|---|
@@ -505,14 +487,13 @@ def _(mo, pd):
         ),
         mo.ui.table(priority_df, selection=None),
     ])
-
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md("""
-    ### Feasibility implications for Idea 1
+    ### 3.2 Feasibility implications for Idea 1
 
     **The four example user priorities, assessed:**
 
@@ -549,7 +530,6 @@ def _(mo):
       augmenting CCL with population or socioeconomic rasters. Technically feasible with public
       datasets, but not a zero-effort addition.
     """)
-
     return
 
 
