@@ -20,7 +20,7 @@
 
 import marimo
 
-__generated_with = "0.23.8"
+__generated_with = "0.23.9"
 app = marimo.App(width="full")
 
 
@@ -67,14 +67,14 @@ def _(mo):
        * this notebook fetches BRA-Campinas.geojson from S3
        * inspects feature count, geometry types, AOI IDs
        * visualizes all four geo_levels (city, urban_extent, accelerator_area, 7 districts)
-   * PMTiles (`.pmtiles`): Same data tiled for web map rendering (MVT, z0–13)
+       * PMTiles (`.pmtiles`): Same data tiled for web map rendering (MVT, z0–13)
        * Fetches BRA-Campinas.pmtiles
        * reads the PMTiles header (spec version, file size);
        * builds an interactive OpenLayers map with click interaction to read tile features
     * COG (`.tif`) Raster pixel-level indicator maps
-        * Lists all COG files across all CCL cities via S3 ListObjects 
+        * Lists all COG files across all CCL cities via S3 ListObjects
         * fetches 1 or more COG files for Campinas
-        * fetches and displays metadata (dimensions, CRS, pixel size, overviews)  
+        * fetches and displays metadata (dimensions, CRS, pixel size, overviews)
         * renders thumbnail previews
 
     These files are
@@ -1025,6 +1025,20 @@ def _(cog_inventory_df, mo, rasterio):
     | **Nodata** | `{scenario_cog_meta["nodata"]}` |
     """)
     return (scenario_cog_meta,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ### Resolution calculation
+
+    9e-06° latitude ≈ 1.0 m north-south
+
+    at -22.96° latitude the longitude pixel is 9e-06 × cos(22.96°) ≈ 0.92 m east-west.
+
+    So roughly 1 m pixels over a ~2.4 km × 3.0 km extent (~7.3 km², ~7.5M pixels per band).
+    """)
+    return
 
 
 @app.cell(hide_code=True)
