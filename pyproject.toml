@@ -1,5 +1,5 @@
 [project]
-name = "WRI AIUC Experiments"
+name = "wri-aiuc-experiments"
 version = "0.1.0"
 description = "Experiments for AIUC / Cool Cities Lab, Studio Cohort 7"
 readme = "README.md"
