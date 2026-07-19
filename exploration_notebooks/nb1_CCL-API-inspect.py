@@ -43,7 +43,7 @@ def _(mo):
     - Check whether baseline values are duplicated across scenarios
     - Document what the layer and scenario endpoints actually return
 
-    Key findings: 
+    Key findings:
         * The API is primarily a map configuration service — actual raster data lives in S3 as COG files; the API only surfaces aggregated scalar indicators and map-styling metadata.
         * No credentials required — the API is public.
     """)
@@ -120,7 +120,7 @@ def _(requests):
     return BASE_URL, cities_raw
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(cities_raw, pd):
     cities_df = pd.DataFrame([
         {
@@ -149,7 +149,7 @@ def _(mo):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(cities_df, mo):
     n_total = len(cities_df)
     n_with_data = int(cities_df["has_indicators"].sum())
@@ -171,7 +171,7 @@ def _(cities_df, mo):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(alt, cities_df, mo):
     cities_sorted = cities_df[cities_df["has_indicators"]].sort_values("n_indicators", ascending=False)
     chart = alt.Chart(cities_sorted).mark_bar(color="#378ADD").encode(
@@ -210,7 +210,7 @@ def _(mo):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(cities_raw, defaultdict):
     MODEL_OUTPUT_PREFIXES = [
         "achievable_",
@@ -260,7 +260,7 @@ def _(cities_raw, defaultdict):
     )
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(alt, category_counts, mo, pd):
     cat_df = pd.DataFrame([
         {"category": k, "count": v}
@@ -282,7 +282,7 @@ def _(mo):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(cities_raw, defaultdict, mo):
     mismatches = []
     checked_pairs = 0
@@ -318,7 +318,7 @@ def _(cities_raw, defaultdict, mo):
     return (mismatches,)
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mismatches, pd):
     mismatch_df = pd.DataFrame([
         {
@@ -342,7 +342,7 @@ def _(mo):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(baseline_stems, pd):
     def parse_stem(stem):
         time = next((t for t in ["1200", "1500", "1800"] if t in stem), "all")
@@ -385,7 +385,7 @@ def _(mo):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(all_scenario_ids, cities_raw, pd):
     scenario_coverage = []
     for _city in cities_raw:
@@ -414,7 +414,7 @@ def _(mo):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(BASE_URL, json, requests):
     layer_resp = requests.get(
         f"{BASE_URL}/layers/utci_1500_baseline/ZAF-Cape_Town",
@@ -426,7 +426,7 @@ def _(BASE_URL, json, requests):
     return (layer_data,)
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(layer_data, mo):
     styling = layer_data.get("map_styling", {})
     legend = layer_data.get("legend_styling", {})
@@ -456,7 +456,7 @@ def _(mo):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(BASE_URL, json, requests):
     scenario_resp = requests.get(
         f"{BASE_URL}/scenarios/ZAF-Cape_Town/business_district/street_trees",
@@ -469,7 +469,7 @@ def _(BASE_URL, json, requests):
     return (scenario_data,)
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo, pd, scenario_data):
     layers_summary = pd.DataFrame([
         {

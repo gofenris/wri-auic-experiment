@@ -6,4 +6,5 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "marimo[recommended]>=0.23.8",
+    "pandas>=3.0.3",
 ]
