@@ -153,7 +153,6 @@ def _(mo, pd, re, requests):
         mo.md("**UTCI COG inventory:**"),
         mo.ui.table(cog_df, selection=None, page_size=15),
     ])
-
     return BASE_URL, CITY_ID, S3_BASE, cog_df, indicator_values
 
 
@@ -286,7 +285,6 @@ def _(cog_df, mo):
         mo.md(f"**{len(_indicator_options)} indicators available** (classic-naming COGs only; 6 of 63 excluded — see note above cell)."),
         indicator_dropdown,
     ])
-
     return (indicator_dropdown,)
 
 
@@ -350,7 +348,6 @@ def _(mo, pd):
         ]),
         selection=None,
     )
-
     return (
         LST_COG_KEY,
         TREE_COVER_COG_KEY,
@@ -418,7 +415,6 @@ def _(mo):
     should be labeled as such (e.g. "Zone A/B/C" or informally-named
     sub-areas) rather than presented as official neighborhoods.
     """)
-
     return
 
 
@@ -644,7 +640,6 @@ def _(aoi_geoms, box, folium, gpd, mapping, mo):
         ),
         zones_map,
     ])
-
     return (custom_neighborhoods,)
 
 
@@ -664,14 +659,12 @@ def _(custom_neighborhoods, mo):
         label="Select a neighborhood (hand-drawn zone)",
     )
     neighborhood_dropdown
-
     return (neighborhood_dropdown,)
 
 
 @app.cell
 def _(custom_neighborhoods, neighborhood_dropdown):
     selected_zone = custom_neighborhoods.set_index("zone_name").loc[neighborhood_dropdown.value]
-
     return (selected_zone,)
 
 
@@ -775,7 +768,6 @@ def _(
         """),
         coverage_map,
     ])
-
     return
 
 
@@ -790,7 +782,7 @@ def _(mo):
 @app.cell
 def _(indicator_dropdown):
     _selected_aoi, _selected_layer_id = indicator_dropdown.value
-    
+
     print(f"The Selected indicator is: {_selected_layer_id}")
     return
 
@@ -867,7 +859,6 @@ def _(
             selection=None,
         ),
     ])
-
     return (zone_indicator_stats,)
 
 
@@ -895,7 +886,6 @@ def _(mo):
     the next section for the live version, driven by whichever indicator is
     currently selected.
     """)
-
     return
 
 
@@ -1061,7 +1051,6 @@ def _(mo):
     sampling approach compared in the "Example" section above), so zone and city
     values are computed identically and are directly comparable.
     """)
-
     return
 
 
@@ -1128,13 +1117,123 @@ def _(
             selection=None,
         ),
     ])
-
     return (city_indicator_stats,)
 
 
 @app.cell
-def _(k):
-    k
+def _(city_indicator_stats, mo, neighborhood_dropdown, zone_indicator_stats):
+    import plotly.graph_objects as go
+    from plotly.subplots import make_subplots
+
+    # --- Fixed gauge domains + directionality per indicator ---
+    # Domains are chosen to be "sensible" for a dense Cape Town CBD zone, not a
+    # literal 0-100 for every percentage (e.g. tree canopy/vulnerable-pop values
+    # here are single digits, so 0-100 would squash everything into a sliver).
+    # UTCI domain (9-46) follows the standard UTCI thermal-stress category bounds.
+    _GAUGE_SPECS = [
+        {
+            "key": "thermal_stress", "label": "Thermal stress (UTCI)",
+            "zone_value": zone_indicator_stats["thermal_stress"]["mean"],
+            "city_value": city_indicator_stats["thermal_stress"]["mean"],
+            "domain": [9, 46], "lower_is_better": True,
+        },
+        {
+            "key": "land_surface_temperature", "label": "Land surface temp (deg C)",
+            "zone_value": zone_indicator_stats["land_surface_temperature"]["mean"],
+            "city_value": city_indicator_stats["land_surface_temperature"]["mean"],
+            "domain": [15, 40], "lower_is_better": True,
+        },
+        {
+            "key": "tree_canopy_cover", "label": "Tree canopy cover (%)",
+            "zone_value": zone_indicator_stats["tree_canopy_cover"]["mean"],
+            "city_value": city_indicator_stats["tree_canopy_cover"]["mean"],
+            "domain": [0, 30], "lower_is_better": False,
+        },
+        {
+            "key": "vulnerable_population", "label": "Vulnerable population (% elderly)",
+            "zone_value": zone_indicator_stats["vulnerable_population"]["pct_elderly"],
+            "city_value": city_indicator_stats["vulnerable_population"]["pct_elderly"],
+            "domain": [0, 25], "lower_is_better": True,
+        },
+    ]
+
+    _GREEN, _RED, _GRAY = "#2ca02c", "#d62728", "#999999"
+    _CITY_TICK_COLOR = "#003f88"  # bold, distinct from the green/red/gray bar fills
+
+    def _bar_color(zone_value, city_value, lower_is_better, tol=1e-6):
+        _diff = zone_value - city_value
+        if abs(_diff) < tol:
+            return _GRAY
+        if lower_is_better:
+            return _GREEN if _diff < 0 else _RED
+        return _GREEN if _diff > 0 else _RED
+
+    gauge_fig = make_subplots(
+        rows=2, cols=2,
+        specs=[[{"type": "indicator"}, {"type": "indicator"}],
+               [{"type": "indicator"}, {"type": "indicator"}]],
+        vertical_spacing=0.25,
+    )
+
+    for _i, _spec in enumerate(_GAUGE_SPECS):
+        _row, _col = _i // 2 + 1, _i % 2 + 1
+        _bar_c = _bar_color(_spec["zone_value"], _spec["city_value"], _spec["lower_is_better"])
+        # Delta coloring: for "lower is better" indicators, an increase (value
+        # went up vs. city) is bad (red) and a decrease is good (green); flipped
+        # for "higher is better" indicators like tree canopy.
+        _inc_c = _RED if _spec["lower_is_better"] else _GREEN
+        _dec_c = _GREEN if _spec["lower_is_better"] else _RED
+
+        gauge_fig.add_trace(
+            go.Indicator(
+                mode="gauge+number+delta",
+                value=_spec["zone_value"],
+                delta={
+                    "reference": _spec["city_value"],
+                    "increasing": {"color": _inc_c},
+                    "decreasing": {"color": _dec_c},
+                },
+                title={"text": _spec["label"]},
+                gauge={
+                    "axis": {"range": _spec["domain"]},
+                    "bar": {"color": _bar_c},
+                    "threshold": {
+                        "line": {"color": _CITY_TICK_COLOR, "width": 8},
+                        "thickness": 1.0,
+                        "value": _spec["city_value"],
+                    },
+                },
+            ),
+            row=_row, col=_col,
+        )
+
+    # Extra top margin (t=110 vs. the previous 60) reserves room for the figure
+    # suptitle above the row-1 indicator titles — with only 60px there wasn't
+    # enough vertical space and the suptitle overlapped the top-left gauge's own
+    # title ("Thermal stress (UTCI)"). Height bumped slightly (540 vs. 500) so
+    # the added margin doesn't visually compress the gauges themselves.
+    gauge_fig.update_layout(
+        height=540,
+        margin=dict(l=40, r=40, t=110, b=20),
+        title=dict(
+            text=f"{neighborhood_dropdown.value} vs. whole business_district (blue tick = city reference)",
+            y=0.98,
+            yanchor="top",
+        ),
+    )
+
+    mo.vstack([
+        mo.md(f"""
+        ### {neighborhood_dropdown.value} — indicator gauges vs. city
+
+        Bar color: **green** = better than the city average for that indicator,
+        **red** = worse (direction depends on the indicator — e.g. lower heat is
+        better, higher tree canopy is better). Thick **blue tick** marks the
+        `business_district`-wide value each zone is compared against.
+        """),
+        gauge_fig,
+    ])
+
     return
 
 
@@ -1165,7 +1264,6 @@ def _(city_indicator_stats, mo, neighborhood_dropdown, zone_indicator_stats):
     {summary_prompt}
     ```
     """)
-
     return (summary_prompt,)
 
 
@@ -1184,7 +1282,6 @@ def _(mo, summary_prompt):
     run_button = mo.ui.run_button(label="Query Models")
 
     mo.vstack([prompt_input, temperature_slider, run_button])
-
     return prompt_input, run_button, temperature_slider
 
 
@@ -1207,7 +1304,6 @@ def _(mo, prompt_input, run_button, temperature_slider):
 
     {response_text}
     """)
-
     return
 
 
