@@ -244,3 +244,59 @@ After generating each LLM output, evaluate qualitatively:
 - `numpy`, `pandas` — standard
 - `anthropic` — LLM API calls (new)
 - `requests` — API scalar fetch (existing pattern from nb1)
+
+---
+
+## TEMPORARY TODO — multi-indicator gauge + narrative section
+
+**(Working checklist for the current build session — remove once implemented and folded into the
+sections above.)**
+
+Context: see `experiment_notebooks/wri_ccl_data_layers_findings.md` for the data-discovery findings
+this is based on. Real per-city data confirmed for Cape Town: thermal stress (UTCI), land surface
+temperature, tree canopy cover, and vulnerable population (WorldPop elderly/young children, at
+`urban_extent` scope). "Days above 32°C/year" is confirmed absent from this dataset and is dropped
+from scope — not derivable without a time series.
+
+Already built (reuse, don't recreate): `custom_neighborhoods`, `neighborhood_dropdown`,
+`selected_zone`, `indicator_dropdown`, `GDAL_ENV`, `cog_url_for` (utci-only, via `cog_df`),
+`zonal_stats_for_geom`, `overview_stats`.
+
+- [ ] **Cell — new COG registry for non-UTCI layers.** `cog_df` only covers the `utci/` S3 prefix.
+      Build a small registry (dict or DataFrame) of the direct S3 keys for the 4 real indicators,
+      per the findings doc: `LandSurfaceTemperature` (business_district), `tree_cover_baseline`
+      (business_district), `WorldPop__AgesexClasses_ELDERLY` + `_YOUNG_CHILDREN` (urban_extent only
+      for Cape Town). Include the AOI scope per layer since it's inconsistent (some
+      business_district, some urban_extent-only).
+- [ ] **Cell — generic zonal-stats-by-URL helper.** `zonal_stats_for_geom`/`cog_url_for` assume a
+      `cog_df` lookup by `(aoi, layer_id)`. Add a thin variant that takes a direct S3 key/URL, so we
+      can reuse the same zonal-stats machinery for the new registry without forcing everything
+      through `cog_df`.
+- [ ] **Cell — compute city-wide + zone stats for all 4 indicators.** For each of thermal stress
+      (already computed elsewhere, just reuse), LST, tree canopy cover, vulnerable population: compute
+      one mean for the whole reference area (business_district or urban_extent, whichever the layer
+      supports) via `overview_stats`, and one mean for `selected_zone.geometry` via
+      `zonal_stats_for_geom`. Store as a small structured dict/DataFrame — one row per indicator, with
+      city_mean, zone_mean, units/label.
+      - [ ] Decide vulnerable-population framing: elderly + young children summed? Reported
+            separately? Raw counts vs. density vs. % of total pop — needs a units decision before
+            display.
+- [ ] **Cell — horizontal gauge visualization.** One gauge per indicator showing city_mean and
+      zone_mean on the same scale (e.g. a horizontal bar/track with two markers, or small
+      matplotlib/svg per indicator). Layout: stack all 4 gauges together for the selected zone.
+- [ ] **Cell — assemble summary object (JSON).** Extend the Section 4 schema above with the new
+      indicators (`land_surface_temperature`, `tree_canopy_cover`, `vulnerable_population` alongside
+      `absolute_stats`/`utci_1500`), still keyed by the selected zone identity. Save to
+      `experiment_notebooks/outputs/`.
+- [ ] **Cell — LLM call (Sonnet first).** Prompt using the summary object; target output style per
+      the examples the user gave:
+      - Short, bolded headline framing overall heat exposure relative to city (e.g. "This area
+        experiences very high heat exposure compared to the rest of the city.")
+      - 2-3 sentences citing which specific factors drive that (surface temp, thermal stress, tree
+        canopy, vulnerable population) relative to city averages
+      - Concise, plain-language, no jargon
+      Save output to `experiment_notebooks/outputs/`.
+- [ ] **Cell — display narrative + gauges together** as the final "selected area summary" output.
+- [ ] `mo.md` note: document that "days above 32°C" was scoped out (data not available — see
+      findings doc), and that vulnerable-population is `urban_extent`-scoped by data necessity, not a
+      zone-specific measurement limitation of our own making.
